@@ -22,10 +22,12 @@ export class BasicsScene extends Phaser.Scene {
 
     create() {
 
-        //World
+        // @ts-ignore
+        this.res.init();
 
         /** Background */
-        this.add.image(0, 0, 'sky')
+        const image = this.add.image(0, 0, 'sky');
+        image.setScale(2, 2);
 
         this.anims.create({
             key: 'left',
