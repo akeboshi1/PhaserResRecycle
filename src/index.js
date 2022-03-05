@@ -1,4 +1,10 @@
-import 'phaser';
+import 'phaser3';
+import { InputPlugin } from "./plugin/input.plugin.ts";
+import { LoaderPlugin } from "./plugin/loader.plugin";
+import { ResourcePlugin } from "./plugin/resource.plugin";
+import { GameObjectCreator } from "./plugin/gameobject.creator.plugin";
+import { GameObjectFactory } from "./plugin/gameobject.factory.plugin";
+
 
 let playerX = 100
 let playerY = 200
@@ -11,9 +17,36 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300},
+            gravity: { y: 300 },
             debug: false
         }
+    },
+    plugins: {
+        global: [
+            {
+                key: "InputPlugin",
+                plugin: InputPlugin,
+            },
+            {
+                key: "Loader",
+                plugin: LoaderPlugin,
+            },
+            {
+                key: "GameObjectFactory",
+                plugin: GameObjectFactory,
+            },
+            {
+                key: "GameObjectCreator",
+                plugin: GameObjectCreator,
+            }
+        ],
+        scene: [
+            {
+                key: "ResourcePlugin",
+                plugin: ResourcePlugin,
+                mapping: "res"
+            },
+        ]
     },
     scene: {
         preload: preload,
@@ -24,22 +57,22 @@ let config = {
 
 let game = new Phaser.Game(config);
 
-function preload () {
+function preload() {
     this.load.image('sky', '../assets/sky.png')
     this.load.image('ground', '../assets/platform.png')
     this.load.image('star', '../assets/star.png')
     this.load.image('bomb', '../assets/star.png')
-    this.load.spritesheet('dude', '../assets/dude.png', { frameWidth:32, frameHeight: 48})
+    this.load.spritesheet('dude', '../assets/dude.png', { frameWidth: 32, frameHeight: 48 })
 
 }
 
-function create () {
-    
+function create() {
+
     //World
 
     /** Background */
     this.add.image(400, 300, 'sky')
-    
+
 
     /*** Platforms */
     let platform = this.physics.add.staticGroup()
@@ -61,17 +94,17 @@ function create () {
 
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3}),
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
         frameRate: 10,
         repeat: -1
     })
 
     this.anims.create({
         key: 'turn',
-        frames: [ { key: 'dude', frame: 4 } ],
+        frames: [{ key: 'dude', frame: 4 }],
         frameRate: 20
     });
-    
+
     this.anims.create({
         key: 'right',
         frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
