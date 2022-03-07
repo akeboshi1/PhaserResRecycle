@@ -20,7 +20,7 @@ export class GameObjectCreator extends Phaser.GameObjects.GameObjectCreator {
  * @param {string} factoryType - The key of the factory that you will use to call to Phaser.Scene.make[ factoryType ] method.
  * @param {function} factoryFunction - The constructor function to be called when you invoke to the Phaser.Scene.make method.
  */
-Phaser.GameObjects.GameObjectCreator.register = function(factoryType, factoryFunction) {
+Phaser.GameObjects.GameObjectCreator.register = function (factoryType, factoryFunction) {
     //  if (!GameObjectCreator.prototype.hasOwnProperty(factoryType))
     //  {
     GameObjectCreator.prototype[factoryType] = factoryFunction;
@@ -40,7 +40,7 @@ Phaser.GameObjects.GameObjectCreator.register = function(factoryType, factoryFun
  *
  * @return {Phaser.GameObjects.Image} The Game Object that was created.
  */
-Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToScene): Phaser.GameObjects.Image {
+Phaser.GameObjects.GameObjectCreator.register("image", function (config, addToScene): Phaser.GameObjects.Image {
 
     if (config === undefined) { config = {}; }
 
@@ -50,7 +50,8 @@ Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToSce
     let _key = key;
     let _frame = frame;
     let _config = config;
-    if (!this.scene.textures.get(key)) {
+    const _texture = this.scene.textures.get(key);
+    if (!_texture || _texture.key === "__MISSING") {
         _key = null;
         _frame = null;
         _config = { key: _key, frame: _frame };
@@ -62,13 +63,15 @@ Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToSce
     }
     Phaser.GameObjects.BuildGameObject(this.scene, image, _config);
     // 如果已经加载过，但被移除，则再次加载；如果没有加载过，却被使用，则报错
-    // if (!_key && key) {
-    //     this.scene.load.reload(key).then(() => {
-    //         image.setTexture(key);
-    //     }).catch((error) => {
-    //         Logger.error(error);
-    //     });
-    // }
+    if (!_key && key) {
+        this.scene.load.reload(key).then(() => {
+            image.setTexture(key);
+        }).catch((error) => {
+            console.error(error);
+        });
+    } else {
+        image["hasBind"] = true;
+    }
     return image;
 });
 
@@ -85,7 +88,7 @@ Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToSce
  *
  * @return {Phaser.GameObjects.Sprite} The Game Object that was created.
  */
-GameObjectCreator.register("sprite", function(config, addToScene): Phaser.GameObjects.Image {
+GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameObjects.Image {
     if (config === undefined) { config = {}; }
 
     const key = Phaser.Utils.Objects.GetAdvancedValue(config, "key", null);
@@ -94,7 +97,8 @@ GameObjectCreator.register("sprite", function(config, addToScene): Phaser.GameOb
     let _key = key;
     let _frame = frame;
     let _config = config;
-    if (!this.scene.textures.get(key)) {
+    const _texture = this.scene.textures.get(key);
+    if (!_texture || _texture.key === "__MISSING") {
         _key = null;
         _frame = null;
         _config = { key: _key, frame: _frame };
@@ -117,6 +121,8 @@ GameObjectCreator.register("sprite", function(config, addToScene): Phaser.GameOb
         }).catch((error) => {
             console.error(error);
         });
+    } else {
+        sprite["hasBind"] = true;
     }
     return sprite;
 });

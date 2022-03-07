@@ -20,7 +20,7 @@ export class GameObjectFactory extends Phaser.GameObjects.GameObjectFactory {
  * @param {string} factoryType - The key of the factory that you will use to call to Phaser.Scene.add[ factoryType ] method.
  * @param {function} factoryFunction - The constructor function to be called when you invoke to the Phaser.Scene.add method.
  */
-Phaser.GameObjects.GameObjectFactory.register = function(factoryType, factoryFunction) {
+Phaser.GameObjects.GameObjectFactory.register = function (factoryType, factoryFunction) {
     // if (!GameObjectFactory.prototype.hasOwnProperty(factoryType)) {
     GameObjectFactory.prototype[factoryType] = factoryFunction;
     // }
@@ -41,10 +41,11 @@ Phaser.GameObjects.GameObjectFactory.register = function(factoryType, factoryFun
  *
  * @return {Phaser.GameObjects.Image} The Game Object that was created.
  */
-Phaser.GameObjects.GameObjectFactory.register("image", function(x, y, key, frame): Phaser.GameObjects.Image {
+Phaser.GameObjects.GameObjectFactory.register("image", function (x, y, key, frame): Phaser.GameObjects.Image {
     let _key = key;
     let _frame = frame;
-    if (!this.scene.textures.get(key)) {
+    const _texture = this.scene.textures.get(key);
+    if (!_texture || _texture.key === "__MISSING") {
         _key = null;
         _frame = null;
     }
@@ -56,6 +57,8 @@ Phaser.GameObjects.GameObjectFactory.register("image", function(x, y, key, frame
         }).catch((error) => {
             console.error(error);
         });
+    } else {
+        image["hasBind"] = true;
     }
     return this.displayList.add(image);
 
@@ -76,10 +79,11 @@ Phaser.GameObjects.GameObjectFactory.register("image", function(x, y, key, frame
  *
  * @return {Phaser.GameObjects.Sprite} The Game Object that was created.
  */
-GameObjectFactory.register("sprite", function(x, y, key, frame): Phaser.GameObjects.Sprite {
+GameObjectFactory.register("sprite", function (x, y, key, frame): Phaser.GameObjects.Sprite {
     let _key = key;
     let _frame = frame;
-    if (!this.scene.textures.get(key)) {
+    const _texture = this.scene.textures.get(key);
+    if (!_texture || _texture.key === "__MISSING") {
         _key = null;
         _frame = null;
     }
@@ -92,6 +96,8 @@ GameObjectFactory.register("sprite", function(x, y, key, frame): Phaser.GameObje
         }).catch((error) => {
             console.error(error);
         });
+    } else {
+        sprite["hasBind"] = true;
     }
     return sprite;
 });

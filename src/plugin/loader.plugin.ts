@@ -69,6 +69,7 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
                 }
             }, this);
             this.scene.load.image(res.key, res.url);
+            this.scene.load.start();
         });
     }
 
