@@ -94,6 +94,7 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
             _tmpKey = key;
         }
         this.animationKey = key;
+        if (!this.scene.anims.get(_tmpKey)) return this;
         return super.play(_tmpKey, ignoreIfPlaying);
     }
 
