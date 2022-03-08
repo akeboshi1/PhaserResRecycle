@@ -81,7 +81,8 @@ const _generatFrameNames = function () {
     }
     const key = arguments[0];
     const config = arguments[1];
-    if (!this["framesMap"].get(key)) this["framesMap"].set(key, config);
+    const animKey = arguments[2];
+    if (!this["framesMap"].get(animKey)) this["framesMap"].set(animKey, config);
     // key config
     return generateFrameNames.call(this, key, config);
 }

@@ -35,14 +35,16 @@ export class BasicsScene extends Phaser.Scene {
 
         this.anims.create({
             key: "loading_anis",
-            frames: this.anims.generateFrameNames("loading", { prefix: "loading_", start: 1, end: 3, zeroPad: 1, suffix: ".png" }),
+            // @ts-ignore
+            frames: this.anims.generateFrameNames("loading", { prefix: "loading_", start: 1, end: 3, zeroPad: 1, suffix: ".png" }, "loading_anis"),
             frameRate: 5,
             repeat: -1
         });
 
         this.anims.create({
             key: "__DEFAULTANIMATION",
-            frames: this.anims.generateFrameNames("lifteffect", { prefix: "lifteffect_", start: 1, end: 12, zeroPad: 1 }),
+            // @ts-ignore
+            frames: this.anims.generateFrameNames("lifteffect", { prefix: "lifteffect_", start: 1, end: 12, zeroPad: 1 }, "__DEFAULTANIMATION"),
             frameRate: 5,
             repeat: -1
         });

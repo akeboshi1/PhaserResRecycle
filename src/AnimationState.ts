@@ -69,7 +69,7 @@ export class AnimationState extends Phaser.Animations.AnimationState {
 
         if (!anim) {
             if (ObjectUtils.hasOwnProperty(this.animationManager, "framesMap")) {
-                const config = this.animationManager["framesMap"].get(textureKey);
+                const config = this.animationManager["framesMap"].get(animKey);
                 this.animationManager.generateFrameNames(textureKey, config);
                 const animConfig = this.animationManager["animMap"].get(animKey);
                 // @ts-ignore
