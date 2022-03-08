@@ -89,6 +89,10 @@ anis.generateFrameNames = _generatFrameNames;
 
 const destroy = anis.destroy;
 const _destroy = function () {
+    if (ObjectUtils.hasOwnProperty(this, "animMap")) {
+        this["animMap"].clear();
+        this["animMap"] = null;
+    }
     if (ObjectUtils.hasOwnProperty(this, "framesMap")) {
         this["framesMap"].clear();
         this["framesMap"] = null;
