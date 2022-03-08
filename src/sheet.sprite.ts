@@ -1,26 +1,52 @@
 import "phaser3";
 import { AnimationState } from "./AnimationState";
 import { ObjectUtils } from "./object.utils";
+import { SpriteRes } from "./res/Sprite.res";
 
 export class SheetSprite extends Phaser.GameObjects.Sprite {
-    constructor(scene: Phaser.Scene, x: number, y: number, key: string | Phaser.Textures.Texture, frame?: string | number) {
+    /**
+     * 默认动画key
+     */
+    private _defaultAnimationKey: string = "__DEFAULTANIMATION";
+    /**
+     * 动画的key
+     */
+    private _animationKey: string | Phaser.Animations.Animation | Phaser.Types.Animations.PlayAnimationConfig;
+    constructor(scene: Phaser.Scene, x: number, y: number, key: string | Phaser.Textures.Texture, frame?: string | number, defaultAnimationKey?: string) {
         super(scene, x, y, key, frame);
         this.anims = new AnimationState(this);
-        ObjectUtils.defineProperty(this, {
-            hasBind: {
-                value: false,
-                writable: true
-            },
-            tmpKey: {
-                value: null,
-                writable: true
-            }
-        });
+        // 添加默认动画资源
+        if (defaultAnimationKey) this._defaultAnimationKey = defaultAnimationKey;
+        if (!ObjectUtils.hasOwnProperty(this, "hasBind")) {
+            ObjectUtils.defineProperty(this, {
+                hasBind: {
+                    value: false,
+                    writable: true
+                }
+            });
+        }
+        if (!ObjectUtils.hasOwnProperty(this, "textureKey")) {
+            ObjectUtils.defineProperty(this, {
+                textureKey: {
+                    value: null,
+                    writable: true
+                }
+            });
+        }
     }
 
-    setAnimation(key) {
+    get animationKey() {
+        return this._animationKey || this._defaultAnimationKey;
+    }
+
+    set animationKey(val) {
+        this._animationKey = val;
+    }
+
+    setAnimation(animationKey: string, textureKey: string) {
+        this.animationKey = animationKey;
         // @ts-ignore
-        if (this.anims) this.anims.setAnimation(key);
+        if (this.anims) this.anims.setAnimation(animationKey, textureKey);
     }
 
     bind(key: string) {
@@ -34,8 +60,10 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
             });
         }
         // @ts-ignore
-        const res: ImageRes = this.scene.load.get(key);
+        const res: SpriteRes = this.scene.load.get(key);
         if (res) {
+            // @ts-ignore
+            this.textureKey = key;
             // @ts-ignore
             this.hasBind = true;
             // @ts-ignore
@@ -47,7 +75,7 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
     loose(key: string) {
         if (!key) return;
         // @ts-ignore
-        const res: ImageRes = this.scene.load.get(key);
+        const res: SpriteRes = this.scene.load.get(key);
         if (res) {
             // @ts-ignore
             this.hasBind = false;
@@ -58,7 +86,15 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
     }
 
     play(key: string | Phaser.Animations.Animation | Phaser.Types.Animations.PlayAnimationConfig, ignoreIfPlaying: boolean = false): this {
-        return super.play(key, ignoreIfPlaying);
+        let _tmpKey;
+        // @ts-ignore
+        if (!this.anims.getAnimation(key) || !this.texture || this.texture.key === "__MISSING") {
+            _tmpKey = this._defaultAnimationKey;
+        } else {
+            _tmpKey = key;
+        }
+        this.animationKey = key;
+        return super.play(_tmpKey, ignoreIfPlaying);
     }
 
     setTexture(key: string, frame?: string | number): this {
@@ -72,15 +108,15 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
 
     destroy(fromScene?: boolean): void {
         // @ts-ignore
-        if (this.tmpKey && this.hasBind) {
+        if (this.textureKey && this.hasBind) {
             let key;
             // @ts-ignore
-            if (this.tmpKey instanceof String) {
+            if (typeof (this.textureKey) === "string") {
                 // @ts-ignore
-                key = this.tmpKey;
+                key = this.textureKey;
             } else {
                 // @ts-ignore
-                key = (<Phaser.Textures.Texture>this.tmpKey).key;
+                key = (<Phaser.Textures.Texture>this.textureKey).key;
             }
             this.loose(key);
         }

@@ -93,7 +93,7 @@ GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameO
 
     const key = Phaser.Utils.Objects.GetAdvancedValue(config, "key", null);
     const frame = Phaser.Utils.Objects.GetAdvancedValue(config, "frame", null);
-
+    const animationKey = Phaser.Utils.Objects.GetAdvancedValue(config, "animation", "__DEFAULTANIMATION");
     let _key = key;
     let _frame = frame;
     let _config = config;
@@ -101,7 +101,7 @@ GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameO
     if (!_texture || _texture.key === "__MISSING") {
         _key = null;
         _frame = null;
-        _config = { key: _key, frame: _frame };
+        _config = { key: _key, frame: _frame, animation: "__DEFAULTANIMATION" };
     }
 
     const sprite = new SheetSprite(this.scene, 0, 0, _key, _frame);
@@ -117,7 +117,12 @@ GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameO
     // 如果已经加载过，但被移除，则再次加载；如果没有加载过，却被使用，则报错
     if (!_key && key) {
         this.scene.load.reload(key).then(() => {
-            sprite.setAnimation(key);
+            sprite.bind(key);
+            sprite.stop();
+            this.scene.anims.remove(sprite.animationKey);
+            // @ts-ignore
+            sprite.setAnimation(sprite.animationKey, key);
+            sprite.play(sprite.animationKey);
         }).catch((error) => {
             console.error(error);
         });

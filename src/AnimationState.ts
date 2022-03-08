@@ -1,24 +1,9 @@
 import { ObjectUtils } from "./object.utils";
-import { SheetSprite } from "./sheet.sprite";
 
 const GetFastValue = Phaser.Utils.Objects.GetFastValue;
 export class AnimationState extends Phaser.Animations.AnimationState {
-    /**
-     * 默认资源key，不参与资源管理
-     */
-    private _defaultKey: string = "__DEFAULTSPRITE";
-    private _hasBind: boolean = false;
     constructor(parent: Phaser.GameObjects.GameObject) {
         super(parent);
-        this.bindTexture();
-    }
-
-    get defaultKey(): string {
-        return this._defaultKey;
-    }
-
-    set defaultKey(val: string) {
-        this._defaultKey = val;
     }
 
     /**
@@ -29,40 +14,26 @@ export class AnimationState extends Phaser.Animations.AnimationState {
      * @since 3.0.0
      *
      * @param {(string|Phaser.Types.Animations.PlayAnimationConfig)} key - The string-based key of the animation to play, or a `PlayAnimationConfig` object.
-     *
+     * @param {(string} textureKey
      * @return {Phaser.GameObjects.GameObject} The Game Object that owns this Animation Component.
      */
-    setAnimation(key) {
-        return this.load(key);
+    setAnimation(key, textureKey) {
+        return this.load(key, textureKey);
     }
 
-    load(key) {
+    load(key, textureKey?: string) {
         if (this.isPlaying) {
             this.stop();
         }
-
-        const manager = this.animationManager;
-        const animKey = (typeof key === "string") ? key : GetFastValue(key, "key", null);
-
-        //  Get the animation, first from the local map and, if not found, from the Animation Manager
-        let anim;
-        if (!this.exists(animKey)) {
-            if (!this._hasBind) this.bindTexture();
-            anim = manager.get(animKey);
-        } else {
-            anim = this.get(animKey);
-        }
-        // anim = (this.exists(animKey)) ? this.get(animKey) : manager.get(animKey);
 
         const fun = () => {
             this.currentAnim = anim;
 
             //  And now override the animation values, if set in the config.
-
             const totalFrames = anim.getTotalFrames();
             const frameRate = GetFastValue(key, "frameRate", anim.frameRate);
             const duration = GetFastValue(key, "duration", anim.duration);
-
+            // @ts-ignore
             anim.calculateDuration(this, totalFrames, duration, frameRate);
 
             this.delay = GetFastValue(key, "delay", anim.delay);
@@ -88,58 +59,39 @@ export class AnimationState extends Phaser.Animations.AnimationState {
             }
 
             this.currentFrame = frame;
-        };
+
+        }
+
+        const animKey = (typeof key === "string") ? key : GetFastValue(key, "key", null);
+
+        //  Get the animation, first from the local map and, if not found, from the Animation Manager
+        let anim = this.getAnimation(animKey);
+
         if (!anim) {
-            console.warn("Missing animation: " + animKey);
-            // get default sprite
-            anim = manager.get(this._defaultKey);
-            // 获取不到scene，所以不在animationState中加载对应的sprite资源
-            fun();
+            if (ObjectUtils.hasOwnProperty(this.animationManager, "framesMap")) {
+                const config = this.animationManager["framesMap"].get(textureKey);
+                this.animationManager.generateFrameNames(textureKey, config);
+                const animConfig = this.animationManager["animMap"].get(animKey);
+                // @ts-ignore
+                anim = this.animationManager.create(animConfig);
+                fun();
+            } else {
+                // 一定会存在一个默认的资源，如果不存在则违背设计思路
+                console.warn("Missing animation: " + animKey);
+            }
         } else {
             fun();
         }
         return this.parent;
     }
 
-    destroy(): void {
-        this.looseTexture();
-        super.destroy();
-    }
-
-    private bindTexture() {
-        const sheetSprite: SheetSprite = <SheetSprite>this.parent;
-        const textureKey = sheetSprite.texture.key;
-        if (!textureKey || textureKey === "__MISSING" || textureKey === "__DEFAULT") return;
-        const scene = sheetSprite.scene;
-        const texture = scene.textures.get(textureKey);
-        if (!ObjectUtils.hasOwnProperty(texture, "useConut")) {
-            ObjectUtils.defineProperty(texture, {
-                useCount: {
-                    value: 0,
-                    writable: true
-                }
-            });
+    getAnimation(key): Phaser.Animations.Animation {
+        let anim;
+        if (!this.exists(key)) {
+            anim = this.animationManager.get(key);
+        } else {
+            anim = this.get(key);
         }
-        this._hasBind = true;
-        // @ts-ignore
-        texture.useCount++;
-    }
-
-    private looseTexture() {
-        const sheetSprite: SheetSprite = <SheetSprite>this.parent;
-        const textureKey = sheetSprite.texture.key;
-        const scene = sheetSprite.scene;
-        const texture = scene.textures.get(textureKey);
-        if (!ObjectUtils.hasOwnProperty(texture, "useConut")) {
-            ObjectUtils.defineProperty(texture, {
-                useCount: {
-                    value: 0,
-                    writable: true
-                }
-            });
-        }
-        this._hasBind = false;
-        // @ts-ignore
-        texture.useCount--;
+        return anim;
     }
 }

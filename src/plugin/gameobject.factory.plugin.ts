@@ -76,10 +76,10 @@ Phaser.GameObjects.GameObjectFactory.register("image", function (x, y, key, fram
  * @param {number} y - The vertical position of this Game Object in the world.
  * @param {(string|Phaser.Textures.Texture)} texture - The key, or instance of the Texture this Game Object will use to render with, as stored in the Texture Manager.
  * @param {(string|number)} [frame] - An optional frame from the Texture this Game Object is rendering with.
- *
+ * @param {string} [animationKey] - An optional frame from the Texture this Game Object is rendering with.
  * @return {Phaser.GameObjects.Sprite} The Game Object that was created.
  */
-GameObjectFactory.register("sprite", function (x, y, key, frame): Phaser.GameObjects.Sprite {
+GameObjectFactory.register("sprite", function (x, y, key, frame, animationKey): Phaser.GameObjects.Sprite {
     let _key = key;
     let _frame = frame;
     const _texture = this.scene.textures.get(key);
@@ -87,12 +87,17 @@ GameObjectFactory.register("sprite", function (x, y, key, frame): Phaser.GameObj
         _key = null;
         _frame = null;
     }
-    const sprite = new SheetSprite(this.scene, x, y, _key, _frame);
+    const sprite = new SheetSprite(this.scene, x, y, _key, _frame, animationKey);
     this.displayList.add(sprite);
     // 如果已经加载过，但被移除，则再次加载；如果没有加载过，却被使用，则报错
     if (!_key && key) {
         this.scene.load.reload(key).then(() => {
-            sprite.setTexture(key);
+            sprite.bind(key);
+            sprite.stop();
+            this.scene.anims.remove(sprite.animationKey);
+            // @ts-ignore
+            sprite.setAnimation(sprite.animationKey,key);
+            sprite.play(sprite.animationKey);
         }).catch((error) => {
             console.error(error);
         });

@@ -1,9 +1,10 @@
 import { ResType } from "../plugin/resource.plugin";
 import { IResource, ResState } from "./IResource";
-export class ImageRes implements IResource {
+export class SpriteRes implements IResource {
     public key: string;
     public url: string;
-    public resType: string = ResType.image;
+    public altasUrl: string;
+    public resType: string = ResType.sprite;
     public lastUseTime: number;
     public state: number = ResState.None;
 
@@ -14,9 +15,10 @@ export class ImageRes implements IResource {
 
     private _isStatic = false;
 
-    constructor(key: string, url: string) {
+    constructor(key: string, url: string, altasUrl: string) {
         this.key = key;
         this.url = url;
+        this.altasUrl = altasUrl;
     }
 
     get isStatic(): boolean {

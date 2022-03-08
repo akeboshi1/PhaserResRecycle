@@ -1,3 +1,5 @@
+import { Image } from './../Image';
+import { SpriteRes } from './../res/Sprite.res';
 import { JsonRes } from "../res/Json.res";
 import { ImageRes } from "../res/Image.res";
 import { ResDisposeTime, ResType } from "./resource.plugin";
@@ -68,7 +70,15 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
                     resolve(fun(resKey));
                 }
             }, this);
-            this.scene.load.image(res.key, res.url);
+            const type = res.resType;
+            switch (type) {
+                case ResType.image:
+                    this.scene.load.image(res.key, res.url);
+                    break;
+                case ResType.sprite:
+                    this.scene.load.atlas(res.key, res.url, (<SpriteRes>res).altasUrl);
+                    break;
+            }
             this.scene.load.start();
         });
     }
@@ -129,6 +139,8 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
         const removeRes: any = this.scene.textures.get(key);
         if (removeRes && (removeRes.key !== "__DEFAULT" && removeRes.key !== "__MISSING") && !removeRes.useCount) {
             this.scene.game.textures.remove(removeRes);
+            // @ts-ignore
+            this.scene.showTxt("removeRes.key:" + removeRes.key);
             return true;
         }
         return false;
@@ -297,7 +309,7 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
  *
  * @return {this} The Loader instance.
  */
-Phaser.Loader.FileTypesManager.register("image", function(key, url, isStatic, xhrSettings) {
+Phaser.Loader.FileTypesManager.register("image", function (key, url, isStatic, xhrSettings) {
     if (Array.isArray(key)) {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < key.length; i++) {
@@ -334,7 +346,7 @@ Phaser.Loader.FileTypesManager.register("image", function(key, url, isStatic, xh
  *
  * @return {this} The Loader instance.
  */
-Phaser.Loader.FileTypesManager.register("atlas", function(key, textureURL, atlasURL, isStatic: boolean, textureXhrSettings, atlasXhrSettings) {
+Phaser.Loader.FileTypesManager.register("atlas", function (key, textureURL, atlasURL, isStatic: boolean, textureXhrSettings, atlasXhrSettings) {
     let multifile;
 
     //  Supports an Object file definition in the key argument
@@ -357,9 +369,11 @@ Phaser.Loader.FileTypesManager.register("atlas", function(key, textureURL, atlas
 
     const _key = String(key);
     const _url = String(textureURL);
-    let res: ImageRes = this._loadDic.get(_key);
+    const _atlasUrl = String(atlasURL);
+    let res: IResource = this._loadDic.get(_key);
     if (!res) {
-        res = new ImageRes(_key, _url);
+        // res = new ImageRes(_key, _url);
+        res = new SpriteRes(_key, _url, _atlasUrl);
         res.isStatic = _isStatic;
         this._loadDic.set(_key, res);
     }
@@ -380,7 +394,7 @@ Phaser.Loader.FileTypesManager.register("atlas", function(key, textureURL, atlas
  *
  * @return {this} The Loader instance.
  */
-Phaser.Loader.FileTypesManager.register("spritesheet", function(key, url, isStatic, frameConfig, xhrSettings) {
+Phaser.Loader.FileTypesManager.register("spritesheet", function (key, url, isStatic, frameConfig, xhrSettings) {
     if (Array.isArray(key)) {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < key.length; i++) {
