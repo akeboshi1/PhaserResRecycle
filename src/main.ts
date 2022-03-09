@@ -50,6 +50,7 @@ var config = {
 // @ts-ignore
 var game = new Phaser.Game(config);
 var anis = game.anims;
+// hack animationmanager create func
 const create = anis.create;
 const _create = function () {
     if (!ObjectUtils.hasOwnProperty(this, "animMap")) {
