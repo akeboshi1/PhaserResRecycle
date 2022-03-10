@@ -13,7 +13,7 @@ export class Image extends Phaser.GameObjects.Image {
 
     bind(key: string) {
         if (!key) return;
-        if (!ObjectUtils.hasOwnProperty(this.texture, "useConut")) {
+        if (!ObjectUtils.hasOwnProperty(this.texture, "useCount")) {
             ObjectUtils.defineProperty(this.texture, {
                 useCount: {
                     value: 0,
