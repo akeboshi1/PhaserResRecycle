@@ -57,8 +57,6 @@ Phaser.GameObjects.GameObjectFactory.register("image", function (x, y, key, fram
         }).catch((error) => {
             console.error(error);
         });
-    } else {
-        image["hasBind"] = true;
     }
     return this.displayList.add(image);
 

@@ -126,8 +126,6 @@ GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameO
         }).catch((error) => {
             console.error(error);
         });
-    } else {
-        sprite["hasBind"] = true;
     }
     return sprite;
 });
