@@ -20,7 +20,7 @@ export class GameObjectCreator extends Phaser.GameObjects.GameObjectCreator {
  * @param {string} factoryType - The key of the factory that you will use to call to Phaser.Scene.make[ factoryType ] method.
  * @param {function} factoryFunction - The constructor function to be called when you invoke to the Phaser.Scene.make method.
  */
-Phaser.GameObjects.GameObjectCreator.register = function(factoryType, factoryFunction) {
+Phaser.GameObjects.GameObjectCreator.register = function (factoryType, factoryFunction) {
     //  if (!GameObjectCreator.prototype.hasOwnProperty(factoryType))
     //  {
     GameObjectCreator.prototype[factoryType] = factoryFunction;
@@ -40,7 +40,7 @@ Phaser.GameObjects.GameObjectCreator.register = function(factoryType, factoryFun
  *
  * @return {Phaser.GameObjects.Image} The Game Object that was created.
  */
-Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToScene): Phaser.GameObjects.Image {
+Phaser.GameObjects.GameObjectCreator.register("image", function (config, addToScene): Phaser.GameObjects.Image {
 
     if (config === undefined) { config = {}; }
 
@@ -86,7 +86,7 @@ Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToSce
  *
  * @return {Phaser.GameObjects.Sprite} The Game Object that was created.
  */
-GameObjectCreator.register("sprite", function(config, addToScene): Phaser.GameObjects.Image {
+GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameObjects.Image {
     if (config === undefined) { config = {}; }
 
     const key = Phaser.Utils.Objects.GetAdvancedValue(config, "key", null);
@@ -118,6 +118,8 @@ GameObjectCreator.register("sprite", function(config, addToScene): Phaser.GameOb
             sprite.bind(key);
             sprite.stop();
             this.scene.anims.remove(sprite.animationKey);
+            // 这一步很重要，必须把图集设置上去，否则动画无法运行
+            sprite.setTexture(key);
             // @ts-ignore
             sprite.setAnimation(sprite.animationKey, key);
             sprite.play(sprite.animationKey);

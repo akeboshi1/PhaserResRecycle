@@ -66,7 +66,7 @@ const _create = function () {
     const key = config.key;
     if (!this["animMap"].get(key)) this["animMap"].set(key, config);
     return create.call(this, config);
-}
+};
 anis.create = _create;
 // hack animationmanager generatcFrameNames func
 const generateFrameNames = anis.generateFrameNames;
@@ -86,9 +86,10 @@ const _generatFrameNames = function () {
     if (!this["framesMap"].get(animKey)) this["framesMap"].set(animKey, config);
     // key config
     return generateFrameNames.call(this, key, config);
-}
+};
 anis.generateFrameNames = _generatFrameNames;
 
+// hack animationmanager destroy func
 const destroy = anis.destroy;
 const _destroy = function () {
     if (ObjectUtils.hasOwnProperty(this, "animMap")) {
@@ -100,7 +101,7 @@ const _destroy = function () {
         this["framesMap"] = null;
     }
     destroy.call(this);
-}
+};
 anis.destroy = _destroy;
 
 game.scene.add("uiScene", BasicsScene, true, { x: 0, y: 0 });

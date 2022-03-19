@@ -93,6 +93,8 @@ GameObjectFactory.register("sprite", function(x, y, key, frame, animationKey): P
             sprite.bind(key);
             sprite.stop();
             this.scene.anims.remove(sprite.animationKey);
+            // 这一步很重要，必须把图集设置上去，否则动画无法运行
+            sprite.setTexture(key);
             // @ts-ignore
             sprite.setAnimation(sprite.animationKey,key);
             sprite.play(sprite.animationKey);

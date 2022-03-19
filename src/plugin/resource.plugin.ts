@@ -13,11 +13,11 @@ export enum ResType {
 /**
  * 默认销毁时间，100s之内资源没有被使用过，直接销毁，默认静态资源不会清理
  */
-export const ResDisposeTime = 100000;
+export const ResDisposeTime = 10000;
 /**
  * 默认资源检测时间30scheck一次
  */
-export const ResCheckTime = 30000;
+export const ResCheckTime = 3000;
 
 export const ResourcePluginKey: string = "ResourcePluginKey";
 

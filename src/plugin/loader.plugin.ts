@@ -139,6 +139,8 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
         if (removeRes && (removeRes.key !== "__DEFAULT" && removeRes.key !== "__MISSING") && !removeRes.useCount) {
             this.scene.anims.removeByTextureKey(removeRes.key);
             this.scene.game.textures.remove(removeRes);
+            // @ts-ignore
+            this.scene.showTxt("removeRes.key:" + removeRes.key);
             console.warn(`${removeRes.key}被销毁`);
             return true;
         }
