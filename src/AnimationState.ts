@@ -60,7 +60,7 @@ export class AnimationState extends Phaser.Animations.AnimationState {
 
             this.currentFrame = frame;
 
-        }
+        };
 
         const animKey = (typeof key === "string") ? key : GetFastValue(key, "key", null);
 

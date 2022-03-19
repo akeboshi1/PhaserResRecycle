@@ -2,7 +2,6 @@ import "phaser3";
 import { AnimationState } from "./AnimationState";
 import { ObjectUtils } from "./object.utils";
 import { SpriteRes } from "./res/Sprite.res";
-
 export class SheetSprite extends Phaser.GameObjects.Sprite {
     /**
      * 默认动画key
@@ -67,7 +66,7 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
             // @ts-ignore
             this.hasBind = true;
             // @ts-ignore
-            this.texture.useCount++;
+            if (this.texture) this.texture.useCount++;
             res.bind(this);
         }
     }
@@ -80,12 +79,14 @@ export class SheetSprite extends Phaser.GameObjects.Sprite {
             // @ts-ignore
             this.hasBind = false;
             // @ts-ignore
-            this.texture.useCount--;
+            if (this.texture) this.texture.useCount--;
             res.loose(this);
         }
     }
 
     play(key: string | Phaser.Animations.Animation | Phaser.Types.Animations.PlayAnimationConfig, ignoreIfPlaying: boolean = false): this {
+        // 当sprite还没有被完全销毁时，就被再次调用
+        if (!this.anims) return;
         let _tmpKey;
         // @ts-ignore
         if (!this.anims.getAnimation(key) || !this.texture || this.texture.key === "__MISSING") {

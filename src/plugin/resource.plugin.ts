@@ -11,9 +11,9 @@ export enum ResType {
     script = "script",
 }
 /**
- * 默认销毁时间，5分钟之内资源没有被使用过，直接销毁，默认静态资源不会清理
+ * 默认销毁时间，100s之内资源没有被使用过，直接销毁，默认静态资源不会清理
  */
-export const ResDisposeTime = 30000;
+export const ResDisposeTime = 100000;
 /**
  * 默认资源检测时间30scheck一次
  */

@@ -20,7 +20,7 @@ export class GameObjectFactory extends Phaser.GameObjects.GameObjectFactory {
  * @param {string} factoryType - The key of the factory that you will use to call to Phaser.Scene.add[ factoryType ] method.
  * @param {function} factoryFunction - The constructor function to be called when you invoke to the Phaser.Scene.add method.
  */
-Phaser.GameObjects.GameObjectFactory.register = function (factoryType, factoryFunction) {
+Phaser.GameObjects.GameObjectFactory.register = function(factoryType, factoryFunction) {
     // if (!GameObjectFactory.prototype.hasOwnProperty(factoryType)) {
     GameObjectFactory.prototype[factoryType] = factoryFunction;
     // }
@@ -41,7 +41,7 @@ Phaser.GameObjects.GameObjectFactory.register = function (factoryType, factoryFu
  *
  * @return {Phaser.GameObjects.Image} The Game Object that was created.
  */
-Phaser.GameObjects.GameObjectFactory.register("image", function (x, y, key, frame): Phaser.GameObjects.Image {
+Phaser.GameObjects.GameObjectFactory.register("image", function(x, y, key, frame): Phaser.GameObjects.Image {
     let _key = key;
     let _frame = frame;
     const _texture = this.scene.textures.get(key);
@@ -77,7 +77,7 @@ Phaser.GameObjects.GameObjectFactory.register("image", function (x, y, key, fram
  * @param {string} [animationKey] - An optional frame from the Texture this Game Object is rendering with.
  * @return {Phaser.GameObjects.Sprite} The Game Object that was created.
  */
-GameObjectFactory.register("sprite", function (x, y, key, frame, animationKey): Phaser.GameObjects.Sprite {
+GameObjectFactory.register("sprite", function(x, y, key, frame, animationKey): Phaser.GameObjects.Sprite {
     let _key = key;
     let _frame = frame;
     const _texture = this.scene.textures.get(key);
@@ -99,8 +99,6 @@ GameObjectFactory.register("sprite", function (x, y, key, frame, animationKey): 
         }).catch((error) => {
             console.error(error);
         });
-    } else {
-        sprite["hasBind"] = true;
     }
     return sprite;
 });

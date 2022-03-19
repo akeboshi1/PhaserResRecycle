@@ -1,6 +1,4 @@
-import { Image } from './../Image';
-import { SpriteRes } from './../res/Sprite.res';
-import { JsonRes } from "../res/Json.res";
+import { SpriteRes } from "./../res/Sprite.res";
 import { ImageRes } from "../res/Image.res";
 import { ResDisposeTime, ResType } from "./resource.plugin";
 import { IResource, ResState } from "../res/IResource";
@@ -45,7 +43,7 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
     checkResDestroyTime() {
         const now = Date.now();
         this._loadDic.forEach((res) => {
-            if ((!res.isStatic && now - res.lastUseTime > ResDisposeTime) || res.state === ResState.PreDispose) {
+            if (!res.isStatic &&( now - res.lastUseTime > ResDisposeTime || res.state === ResState.PreDispose)) {
                 this.remove(res);
             }
         });
@@ -59,7 +57,7 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
     reload(key): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             const res = this._disposeDic.get(key);
-            if (!res) reject(null);
+            if (!res) reject("key为:"+`${key}`+"的资源没有被加载过");
             this._disposeDic.delete(key);
             const fun = (resKey): string => {
                 this.scene.load.off(Phaser.Loader.Events.FILE_COMPLETE);
@@ -86,6 +84,7 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
     /**
      * @method Phaser.Loader.LoaderPlugin#remove
      * @param res
+     *
      */
     remove(res: IResource) {
         const key = res.key;
@@ -138,9 +137,9 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
     checkImage(key: string): boolean {
         const removeRes: any = this.scene.textures.get(key);
         if (removeRes && (removeRes.key !== "__DEFAULT" && removeRes.key !== "__MISSING") && !removeRes.useCount) {
+            this.scene.anims.removeByTextureKey(removeRes.key);
             this.scene.game.textures.remove(removeRes);
-            // @ts-ignore
-            this.scene.showTxt("removeRes.key:" + removeRes.key);
+            console.warn(`${removeRes.key}被销毁`);
             return true;
         }
         return false;
@@ -309,7 +308,7 @@ export class LoaderPlugin extends Phaser.Loader.LoaderPlugin {
  *
  * @return {this} The Loader instance.
  */
-Phaser.Loader.FileTypesManager.register("image", function (key, url, isStatic, xhrSettings) {
+Phaser.Loader.FileTypesManager.register("image", function(key, url, isStatic, xhrSettings) {
     if (Array.isArray(key)) {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < key.length; i++) {
@@ -327,6 +326,8 @@ Phaser.Loader.FileTypesManager.register("image", function (key, url, isStatic, x
         res = new ImageRes(_key, _url);
         res.isStatic = _isStatic;
         this._loadDic.set(_key, res);
+    } else {
+        if(_isStatic)res.isStatic = _isStatic;
     }
     res.lastUseTime = Date.now();
     return this;
@@ -346,7 +347,7 @@ Phaser.Loader.FileTypesManager.register("image", function (key, url, isStatic, x
  *
  * @return {this} The Loader instance.
  */
-Phaser.Loader.FileTypesManager.register("atlas", function (key, textureURL, atlasURL, isStatic: boolean, textureXhrSettings, atlasXhrSettings) {
+Phaser.Loader.FileTypesManager.register("atlas", function(key, textureURL, atlasURL, isStatic: boolean, textureXhrSettings, atlasXhrSettings) {
     let multifile;
 
     //  Supports an Object file definition in the key argument
@@ -376,6 +377,8 @@ Phaser.Loader.FileTypesManager.register("atlas", function (key, textureURL, atla
         res = new SpriteRes(_key, _url, _atlasUrl);
         res.isStatic = _isStatic;
         this._loadDic.set(_key, res);
+    } else {
+        if(_isStatic)res.isStatic = _isStatic;
     }
     res.lastUseTime = Date.now();
     return this;
@@ -394,7 +397,7 @@ Phaser.Loader.FileTypesManager.register("atlas", function (key, textureURL, atla
  *
  * @return {this} The Loader instance.
  */
-Phaser.Loader.FileTypesManager.register("spritesheet", function (key, url, isStatic, frameConfig, xhrSettings) {
+Phaser.Loader.FileTypesManager.register("spritesheet", function(key, url, isStatic, frameConfig, xhrSettings) {
     if (Array.isArray(key)) {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < key.length; i++) {
@@ -414,6 +417,8 @@ Phaser.Loader.FileTypesManager.register("spritesheet", function (key, url, isSta
         res = new ImageRes(_key, _url);
         res.isStatic = _isStatic;
         this._loadDic.set(_key, res);
+    } else {
+        if(_isStatic)res.isStatic = _isStatic;
     }
     res.lastUseTime = Date.now();
     return this;

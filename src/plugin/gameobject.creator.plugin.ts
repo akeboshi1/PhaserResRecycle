@@ -20,7 +20,7 @@ export class GameObjectCreator extends Phaser.GameObjects.GameObjectCreator {
  * @param {string} factoryType - The key of the factory that you will use to call to Phaser.Scene.make[ factoryType ] method.
  * @param {function} factoryFunction - The constructor function to be called when you invoke to the Phaser.Scene.make method.
  */
-Phaser.GameObjects.GameObjectCreator.register = function (factoryType, factoryFunction) {
+Phaser.GameObjects.GameObjectCreator.register = function(factoryType, factoryFunction) {
     //  if (!GameObjectCreator.prototype.hasOwnProperty(factoryType))
     //  {
     GameObjectCreator.prototype[factoryType] = factoryFunction;
@@ -40,7 +40,7 @@ Phaser.GameObjects.GameObjectCreator.register = function (factoryType, factoryFu
  *
  * @return {Phaser.GameObjects.Image} The Game Object that was created.
  */
-Phaser.GameObjects.GameObjectCreator.register("image", function (config, addToScene): Phaser.GameObjects.Image {
+Phaser.GameObjects.GameObjectCreator.register("image", function(config, addToScene): Phaser.GameObjects.Image {
 
     if (config === undefined) { config = {}; }
 
@@ -69,8 +69,6 @@ Phaser.GameObjects.GameObjectCreator.register("image", function (config, addToSc
         }).catch((error) => {
             console.error(error);
         });
-    } else {
-        image["hasBind"] = true;
     }
     return image;
 });
@@ -88,7 +86,7 @@ Phaser.GameObjects.GameObjectCreator.register("image", function (config, addToSc
  *
  * @return {Phaser.GameObjects.Sprite} The Game Object that was created.
  */
-GameObjectCreator.register("sprite", function (config, addToScene): Phaser.GameObjects.Image {
+GameObjectCreator.register("sprite", function(config, addToScene): Phaser.GameObjects.Image {
     if (config === undefined) { config = {}; }
 
     const key = Phaser.Utils.Objects.GetAdvancedValue(config, "key", null);

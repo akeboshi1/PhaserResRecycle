@@ -34,7 +34,7 @@ export class SpriteRes implements IResource {
      * 绑定对象
      * @param img
      */
-    bind(img: Phaser.GameObjects.Image) {
+    bind(img: Phaser.GameObjects.GameObject) {
         this._list.push(img);
         this.lastUseTime = Date.now();
     }
@@ -43,7 +43,7 @@ export class SpriteRes implements IResource {
      * 解绑对象
      * @param img
      */
-    loose(img: Phaser.GameObjects.Image) {
+    loose(img: Phaser.GameObjects.GameObject) {
         const index = this._list.indexOf(img);
         if (index > -1) this._list.splice(index, 1);
         this.lastUseTime = Date.now();

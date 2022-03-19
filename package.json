@@ -15,11 +15,11 @@
   "author": "N.Korous",
   "license": "MIT",
   "devDependencies": {
-    "raw-loader": "^0.5.1",
     "@types/webpack-env": "^1.16.3",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^9.0.1",
     "html-webpack-plugin": "^5.4.0",
+    "raw-loader": "^0.5.1",
     "typescript": "^3.9.6",
     "webpack": "^5.59.1",
     "webpack-cli": "^4.9.1",
@@ -30,7 +30,7 @@
     "expose-loader": "^0.7.5",
     "file-loader": "^4.2.0",
     "path": "^0.12.7",
-    "ts-loader": "7.0.5",
-    "phaser3": "git+ssh://git@code.apowo.com:opensource/phaser3.git"
+    "phaser3": "git+ssh://git@code.apowo.com:opensource/phaser3.git",
+    "ts-loader": "7.0.5"
   }
 }

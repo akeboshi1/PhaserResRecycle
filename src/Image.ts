@@ -1,4 +1,5 @@
 import { ObjectUtils } from "./object.utils";
+import { ImageRes } from "./res/Image.res";
 
 export class Image extends Phaser.GameObjects.Image {
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number) {
